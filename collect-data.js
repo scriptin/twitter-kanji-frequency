@@ -27,11 +27,20 @@ try {
 var T = new Twit(JSON.parse(fs.readFileSync(TWITTER_API_TOKENS_FILE_NAME)));
 var stream = T.stream('statuses/filter', { locations: japanLocation, stall_warnings: true });
 
+function isUniqueTweet(tweet) {
+  if (tweet.favorited) return false;
+  if (tweet.retweeted) return false;
+  if (tweet.quoted_status) return false;
+  return true;
+}
+
 stream.on('tweet', function (tweet) {
-  tweet.text.replace(nonKanjiRegExp, '').split('').forEach(function (char) {
-    kanjiData.all += 1;
-    kanjiData[char] = (kanjiData[char] || 0) + 1;
-  });
+  if (isUniqueTweet(tweet) && tweet.lang === 'ja') {
+    tweet.text.replace(nonKanjiRegExp, '').split('').forEach(function (char) {
+      kanjiData.all += 1;
+      kanjiData[char] = (kanjiData[char] || 0) + 1;
+    });
+  }
 });
 
 stream.on('warning', function (warning) {
