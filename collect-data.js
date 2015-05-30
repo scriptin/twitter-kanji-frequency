@@ -46,6 +46,7 @@ stream.on('error', function (error) {
 
 function getStatus() {
   return {
+    state: paused ? 'PAUSED' : 'RUNNING',
     percentFull: fallingBehindPercentFull,
     totalKanji: kanjiData.all
   };
@@ -66,10 +67,10 @@ function save(kanjiData, fileName) {
 
 function getHelp() {
   return [
-    '"status" - check status',
-    '"save" - save progress to file',
-    '"pause"/"resume" - pause/resume stream',
-    '"exit" or "quit" - close stream and quit'
+    'status       - check status',
+    'save         - save collected data to file',
+    'pause/resume - pause/resume stream',
+    'quit         - close stream and quit'
   ];
 }
 
@@ -96,15 +97,17 @@ function evaluate(cmd, context, filename, callback) {
     case 'stop':
       paused || stream.stop();
       paused = true;
+      callback(null, 'PAUSED');
       break;
-    case 'unpause':
     case 'resume':
+    case 'unpause':
     case 'continue':
       paused && stream.start();
       paused = false;
+      callback(null, 'RESUMED');
       break;
-    case 'exit':
     case 'quit':
+    case 'exit':
       process.exit();
       break;
     default:
