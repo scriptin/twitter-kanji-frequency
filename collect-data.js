@@ -40,8 +40,8 @@ function isUniqueTweet(tweet) {
 }
 
 stream.on('tweet', function (tweet) {
-  if (isUniqueTweet(tweet) && tweet.lang === 'ja' && !filter.has(Buffer(tweet.id_str))) {
-    filter.add(Buffer(tweet.id_str));
+  if (isUniqueTweet(tweet) && tweet.lang === 'ja' && !filter.has(new Buffer(tweet.id_str))) {
+    filter.add(new Buffer(tweet.id_str));
     tweet.text.replace(nonKanjiRegExp, '').split('').forEach(function (char) {
       kanjiData.all += 1;
       kanjiData[char] = (kanjiData[char] || 0) + 1;
@@ -103,23 +103,31 @@ function evaluate(cmd, context, filename, callback) {
       callback(null, getStatus());
       break;
     case 'save':
-      paused || stream.stop();
+      if (!paused) stream.stop();
       save(kanjiData, FREQ_TABLE_FILE_NAME);
-      paused || stream.start();
+      if (!paused) stream.start();
       callback(null, 'Saved data into ' + FREQ_TABLE_FILE_NAME);
       break;
     case 'pause':
     case 'stop':
-      paused || stream.stop();
-      paused = true;
-      callback(null, 'PAUSED');
+      if (!paused) {
+        stream.stop();
+        paused = true;
+        callback(null, 'PAUSED');
+      } else {
+        callback(null, 'ALREADY PAUSED');
+      }
       break;
     case 'resume':
     case 'unpause':
     case 'continue':
-      paused && stream.start();
-      paused = false;
-      callback(null, 'RESUMED');
+      if (paused) {
+        stream.start();
+        paused = false;
+        callback(null, 'RESUMED');
+      } else {
+        callback(null, 'ALREADY RUNNING');
+      }
       break;
     case 'quit':
     case 'exit':
