@@ -10,9 +10,10 @@ See [`POST statuses/filter`][statuses-filter] for details.
 1. `git clone https://github.com/THIS/REPO.git`
 2. `npm install`
 3. `cp tokens.json.dist tokens.json`
-4. `vi tokens.json` - fill in your tokens ([create a new app](https://apps.twitter.com/app/new))
-5. `node collect-data.js` - type `help` to see help message about how to use it
-6. Data will be saved into `kanji.json` once you type `save` command in interactive prompt
+4. Fill in your tokens in `tokens.json` ([create a new app](https://apps.twitter.com/app/new))
+5. `node collect-data.js` - a new stream is started right away, but data is not being saved automatically!
+6. Enter `help` to see a list of available commands
+7. Enter `save` to store data in a file (`kanji.json` in root directory)
 
 # Status message
 
