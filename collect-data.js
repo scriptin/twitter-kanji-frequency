@@ -9,7 +9,7 @@ var
 var FREQ_TABLE_FILE_NAME = './kanji.json';
 var TWITTER_API_TOKENS_FILE_NAME = './tokens.json';
 
-var japanLocation = [134.727746, 34.029655, 140.726280, 36.363560]; // From Osaka to Tokyo
+var japanLocation = [129.484177, 30.923179, 145.985641, 45.799878]; // Most of Japan
 var nonKanjiRegExp = /[^\u4e00-\u9fff]+/g;
 var fallingBehindPercentFull = 0;
 
