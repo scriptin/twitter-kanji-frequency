@@ -3,7 +3,8 @@
 var
   fs = require('fs'),
   Twit = require('twit'),
-  repl = require('repl');
+  repl = require('repl'),
+  bloem = require('bloem');
 
 var FREQ_TABLE_FILE_NAME = './kanji.json';
 var TWITTER_API_TOKENS_FILE_NAME = './tokens.json';
@@ -24,6 +25,10 @@ try {
               'starting from scratch. Error: ' + e.message);
 }
 
+// Bloem filter to prevent duplicate tweets from being processed.
+// Filter scales automatically to hold larger number of items.
+var filter = new bloem.ScalingBloem(0.99, { initial_capacity: 1000, scaling: 2, ratio: 0.9 });
+
 var T = new Twit(JSON.parse(fs.readFileSync(TWITTER_API_TOKENS_FILE_NAME)));
 var stream = T.stream('statuses/filter', { locations: japanLocation, stall_warnings: true });
 
@@ -35,7 +40,8 @@ function isUniqueTweet(tweet) {
 }
 
 stream.on('tweet', function (tweet) {
-  if (isUniqueTweet(tweet) && tweet.lang === 'ja') {
+  if (isUniqueTweet(tweet) && tweet.lang === 'ja' && !filter.has(Buffer(tweet.id_str))) {
+    filter.add(Buffer(tweet.id_str));
     tweet.text.replace(nonKanjiRegExp, '').split('').forEach(function (char) {
       kanjiData.all += 1;
       kanjiData[char] = (kanjiData[char] || 0) + 1;
