@@ -63,6 +63,7 @@ function getStatus() {
   return {
     state: paused ? 'PAUSED' : 'RUNNING',
     percentFull: fallingBehindPercentFull,
+    uniqueKanji: Object.keys(kanjiData).length - 1,
     totalKanji: kanjiData.all
   };
 }

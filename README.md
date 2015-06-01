@@ -17,8 +17,12 @@ See [`POST statuses/filter`][statuses-filter] for details.
 
 # Status message
 
-    { state: 'RUNNING', percentFull: 0, totalKanji: 123 }
+    { state: 'RUNNING',
+      percentFull: 0,
+      uniqueKanji: 3666,
+      totalKanji: 2300350 }
 
 - `state` - if `'PAUSED'`, data is **not** being collected
 - `percentFull` - how full is a stream queue, see description of [`stall_warnings` parameter](https://dev.twitter.com/streaming/overview/request-parameters#stallwarnings)
-- `totalKanji` - how much kanji has been collected so far
+- `uniqueKanji` - how many *distinct* kanji were seen so far
+- `totalKanji` - how many kanji were seen *in total*, including repetitions
